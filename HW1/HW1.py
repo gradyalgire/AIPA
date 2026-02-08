@@ -87,8 +87,36 @@ def BreadthFirstSearch(startCity, goalCity):
 
 
 # depth first search algorithm
-#
-#
+def DepthFirstSearch(startCity, goalCity):
+    stack = [startCity]
+    parent = {startCity: None}
+    
+    # prevent looping to previous cities
+    visited = {startCity}
+    
+    # performance counter
+    nodesExpanded = 0
+
+    # continue until no cities left
+    while stack:
+        # expand newest added city
+        current = stack.pop()
+        nodesExpanded += 1
+
+        # check if goal found
+        if current == goalCity:
+            path = buildPath(parent, startCity, goalCity)
+            return path, (len(path) - 1), nodesExpanded
+        
+        # check neigboring cities
+        for neighbor, _ in map[current]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                parent[neighbor] = current
+                stack.append(neighbor)
+
+    # handle infinite loop case
+    return [], float("inf"), nodesExpanded
 
 
 # greedy best first search algorithm
@@ -167,8 +195,12 @@ print()
 
 
 # test depth first search algorithm
-#
-#
+print("DFS Arad -> Bucharest TEST:")
+path, hops, expanded = DepthFirstSearch("arad", "bucharest")
+print("path:", path)
+print("hops:", hops)
+print("nodesExpanded:", expanded)
+print()
 
 
 # test greedy best first search algorithm
