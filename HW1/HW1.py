@@ -55,8 +55,35 @@ def buildPath(parentMap, startCity, goalCity):
 
 
 # breadth first search algorithm
-#
-#
+from collections import deque
+
+def BreadthFirstSearch(startCity, goalCity):
+    fringe = deque([startCity])
+
+    # parent pointers for path reconstruction
+    parent = {startCity: None}
+
+    visited = {startCity}
+
+    nodesExpanded = 0
+
+    while fringe:
+        current = fringe.popleft()
+        nodesExpanded += 1
+
+        # goal test when node is removed from front
+        if current == goalCity:
+            path = buildPath(parent, startCity, goalCity)
+            return path, (len(path) - 1), nodesExpanded
+
+        # add all children to the BACK of the queue
+        for neighbor, _dist in map[current]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                parent[neighbor] = current
+                fringe.append(neighbor)
+
+    return [], float("inf"), nodesExpanded
 
 
 # depth first search algorithm
@@ -131,8 +158,12 @@ def main():
 
 
 # test breadth first search
-#
-#
+print("BFS Arad -> Bucharest TEST:")
+path, hops, expanded = BreadthFirstSearch("arad", "bucharest")
+print("path:", path)
+print("hops:", hops)
+print("nodesExpanded:", expanded)
+print()
 
 
 # test depth first search algorithm
