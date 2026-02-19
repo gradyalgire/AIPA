@@ -87,13 +87,74 @@ def BreadthFirstSearch(startCity, goalCity):
 
 
 # depth first search algorithm
-#
-#
+def DepthFirstSearch(startCity, goalCity):
+    stack = [startCity]
+    # map final path
+    parent = {startCity: None}
+    
+    # prevent looping to previous cities
+    visited = {startCity}
+    
+    # performance counter
+    nodesExpanded = 0
+
+    # continue until no cities left
+    while stack:
+        # expand newest added city
+        current = stack.pop()
+        nodesExpanded += 1
+
+        # check if goal found
+        if current == goalCity:
+            path = buildPath(parent, startCity, goalCity)
+            return path, (len(path) - 1), nodesExpanded
+        
+        # check neigboring cities
+        for neighbor, _ in map[current]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                parent[neighbor] = current
+                stack.append(neighbor)
+
+    # handle infinite loop case
+    return [], float("inf"), nodesExpanded
 
 
 # greedy best first search algorithm
-#
-#
+def GreedyBestFirstSearch(startCity, goalCity):
+    # view all available cities with heuristic
+    openList = [(startCity, distanceToBucharest[startCity])]
+
+    # keep track of final path
+    parent = {startCity: None}
+
+    # prevent looping to previous cities
+    visited = {startCity}
+
+    # track performance
+    nodesExpanded = 0
+
+    while openList:
+        # sort by lowest heuristic value
+        openList.sort(key=lambda x: x[1])
+        current, _ = openList.pop(0)
+        nodesExpanded += 1
+
+        # check if goal city is found
+        if current == goalCity:
+            path = buildPath(parent, startCity, goalCity)
+            return path, (len(path) - 1), nodesExpanded
+
+        # check for next city to expand
+        for neighbor, _ in map[current]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                parent[neighbor] = current
+                openList.append((neighbor, distanceToBucharest[neighbor]))
+    
+    # handle infinite loop case
+    return [], float("inf"), nodesExpanded
+
 
 
 def AStarToBucharest(startCity):
@@ -167,13 +228,21 @@ print()
 
 
 # test depth first search algorithm
-#
-#
+print("DFS Arad -> Bucharest TEST:")
+path, hops, expanded = DepthFirstSearch("arad", "bucharest")
+print("path:", path)
+print("hops:", hops)
+print("nodesExpanded:", expanded)
+print()
 
 
 # test greedy best first search algorithm
-#
-#
+print("Greedy Arad -> Bucharest TEST:")
+path, hops, expanded = GreedyBestFirstSearch("arad", "bucharest")
+print("path:", path)
+print("hops:", hops)
+print("nodesExpanded:", expanded)
+print()
 
 
 # test main function
