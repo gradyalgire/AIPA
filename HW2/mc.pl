@@ -10,13 +10,15 @@
 %   - safe/1
 %   - move/3
 %   - solve_dfs/1 (DFS with cycle checking)
-%
-% TODO:
 %   - solve_bfs/1 (BFS shortest path)
 %
 % Run:
 %   ?- run(dfs).
-%   ?- run(bfs).   % after BFS implemented
+%   ?- run(bfs).
+%
+%   These will:
+%       - Print the solution path state-by-state
+%       - Print the number of crossings (path length - 1)
 % ============================================================
 
 start([3,3,left]).
@@ -86,13 +88,31 @@ dfs(S, Visited, Path) :-
     dfs(S2, [S2|Visited], Path).
 
 % ============================================================
-% BFS (TODO)
+% BFS SHORTEST PATH
 % ============================================================
-% TODO: Implement solve_bfs(Path) to return the shortest path
-%       from start to goal, with cycle checking.
-solve_bfs(_Path) :-
-    write('TODO: BFS not implemented yet.'), nl,
-    fail.
+solve_bfs(Path) :-
+    start(Start),
+    bfs([[Start]], [Start], RevPath),
+    reverse(RevPath, Path).
+
+bfs([[State | Path] | _], _, [State | Path]) :-
+    goal(State).
+
+bfs([[State | Path] | RestQueue], Visited, Solution) :-
+    findall([Next, State | Path],
+        ( move(State, Next, _),
+          \+ member(Next, Visited)
+        ),
+        NewPaths),
+    append(RestQueue, NewPaths, UpdatedQueue),
+    extract_states(NewPaths, NewStates),
+    append(Visited, NewStates, UpdatedVisited),
+    bfs(UpdatedQueue, UpdatedVisited, Solution).
+
+extract_states([], []).
+
+extract_states([[State | _] | RestPaths], [State | RestStates]) :-
+    extract_states(RestPaths, RestStates).
 
 % ============================================================
 % RUNNER
