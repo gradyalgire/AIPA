@@ -9,6 +9,7 @@
 0.60::movement(hallway).
 0.90::light_switch_on.
 0.65::heating_wanted.
+0.70::actual_temp_low.
 
 % rules
 motion_detected(living_room):-
@@ -31,13 +32,31 @@ heating_on :-
     heating_wanted,
     not(power_failure).
 
+correct_temp_reading :-
+    actual_temp_low,
+    not(faulty_temp_sensor),
+    not(power_failure).
+
+incorrect_temp_reading :-
+    faulty_temp_sensor.
+
+no_heating :-
+    not(heating_on).
+
+lights_not_turning_on :-
+    light_switch_on,
+    not(light_on).
+
 % queries
 evidence(motion_detected(living_room), false).
 evidence(light_on, false).
 evidence(heating_on, false).
+evidence(incorrect_temp_reading, true).
 query(faulty_motion_sensor(living_room)).
 query(power_failure).
 query(faulty_light_sensor).
 query(faulty_thermostat).
-
-    
+query(faulty_temp_sensor).
+query(faulty_motion_sensor(hallway)).
+query(no_heating).
+query(lights_not_turning_on).
